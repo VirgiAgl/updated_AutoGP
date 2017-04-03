@@ -1,0 +1,98 @@
+--------------------------------------------------------------------------------
+Processing file 'gaussian_process.py'
+ outputting to 'gaussian_process_new.ppwd'
+--------------------------------------------------------------------------------
+
+'gaussian_process.py' Line 388
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:         sample_means = tf.concat(1, sample_means)
+                                                           
+    New:         sample_means = tf.concat(axis=1, values=sample_means)
+                                          ~~~~~   ~~~~~~~              
+
+'gaussian_process.py' Line 389
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:         sample_vars = tf.concat(1, sample_vars)
+                                                         
+    New:         sample_vars = tf.concat(axis=1, values=sample_vars)
+                                         ~~~~~   ~~~~~~~             
+
+'gaussian_process.py' Line 231
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:         kernel_chol = tf.pack([tf.cholesky(k) for k in kernel_mat], 0)
+                               ~~~~~~~                                          
+    New:         kernel_chol = tf.stack([tf.cholesky(k) for k in kernel_mat], 0)
+                               ~~~~~~~~                                          
+
+'gaussian_process.py' Line 364
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:         kern_prods = tf.pack(kern_prods, 0)
+                              ~~~~~~~                
+    New:         kern_prods = tf.stack(kern_prods, 0)
+                              ~~~~~~~~                
+
+'gaussian_process.py' Line 365
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:         kern_sums = tf.pack(kern_sums, 0)
+                             ~~~~~~~               
+    New:         kern_sums = tf.stack(kern_sums, 0)
+                             ~~~~~~~~               
+
+'gaussian_process.py' Line 274
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:         pred_means = tf.pack(pred_means, 0)
+                              ~~~~~~~                
+    New:         pred_means = tf.stack(pred_means, 0)
+                              ~~~~~~~~                
+
+'gaussian_process.py' Line 275
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:         pred_vars = tf.pack(pred_vars, 0)
+                             ~~~~~~~               
+    New:         pred_vars = tf.stack(pred_vars, 0)
+                             ~~~~~~~~               
+
+'gaussian_process.py' Line 314
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:             entropy -= weights[i] * util.logsumexp(tf.pack(weighted_log_probs))
+                                                            ~~~~~~~                      
+    New:             entropy -= weights[i] * util.logsumexp(tf.stack(weighted_log_probs))
+                                                            ~~~~~~~~                      
+
+'gaussian_process.py' Line 223
+--------------------------------------------------------------------------------
+
+Renamed function 'tf.pack' to 'tf.stack'
+
+    Old:             covars = tf.pack(covars_list, 0)
+                              ~~~~~~~                 
+    New:             covars = tf.stack(covars_list, 0)
+                              ~~~~~~~~                 
+
+
