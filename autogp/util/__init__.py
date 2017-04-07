@@ -11,3 +11,4 @@ from util import diag_mul
 from util import init_list
 from util import logsumexp
 from util import mat_square
+from utilities import euclidean

@@ -19,13 +19,15 @@ class RadialBasis(kernel.Kernel):
         self.input_dim = input_dim
         self.white = white
 
-    def kernel(self, points1, points2=None):
+    def kernel(self, points1, points2=None): #V_this is just computing the kernel for two points (two vectors), not for N
+        #points. It gives back one kernel value
         if points2 is None:
             points2 = points1
-            white_noise = self.white * util.eye(tf.shape(points1)[0])
+            white_noise = self.white * util.eye(tf.shape(points1)[0]) 
         else:
             white_noise = 0.0
-
+            #V_crea una matrice NxN con diagonale=white e il resto uguale a 0 NO è un punto. Perchè lo sto facendo per 
+            # una sola osservazione. NO di nuovo sbagliato. E' generale.
         points1 = points1 / self.lengthscale
         points2 = points2 / self.lengthscale
         magnitude_square1 = tf.expand_dims(tf.reduce_sum(points1 ** 2, 1), 1)

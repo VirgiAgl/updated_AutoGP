@@ -18,7 +18,7 @@ class GaussianProcess(object):
         An object representing the likelihood function p(y|f).
     kernel_funcs : list of subclasses of kernels.Kernel
         A list of one kernel per latent function.
-    inducing_inputs : ndarray
+    inducing_inputs : ndarray   
         An array of initial inducing input locations. Dimensions: num_inducing * input_dim.
     num_components : int
         The number of mixture of Gaussian components.
@@ -236,7 +236,7 @@ class GaussianProcess(object):
         ell = self._build_ell(weights, means, covars, inducing_inputs,
                               kernel_chol, train_inputs, train_outputs)
         batch_size = tf.to_float(tf.shape(train_inputs)[0])
-        nelbo = -((batch_size / num_train) * (entropy + cross_ent) + ell)
+        nelbo = -((batch_size / num_train) * (entropy + cross_enlt) + ell)
 
         # Build the leave one out loss function.
         loo_loss = self._build_loo_loss(weights, means, covars, inducing_inputs,
