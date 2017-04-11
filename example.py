@@ -5,7 +5,7 @@ import tensorflow as tf
 
 # Generate synthetic data.
 N_all = 200
-N = 50
+N =  5
 inputs = 5 * np.linspace(0, 1, num=N_all)[:, np.newaxis]
 outputs = np.sin(inputs)
 
@@ -20,13 +20,13 @@ ytest = outputs[idx[N:]]
 
 # Initialize the Gaussian process.
 likelihood = autogp.likelihoods.Gaussian()
-kernel = [autogp.kernels.RadialBasis(1)]
+kernel = [autogp.kernels.Matern_3_2(1)]
 inducing_inputs = xtrain
 model = autogp.GaussianProcess(likelihood, kernel, inducing_inputs)
 
 # Train the model.
 optimizer = tf.train.RMSPropOptimizer(0.005)
-model.fit(data, optimizer, loo_steps=50, var_steps=50, epochs=1000)
+model.fit(data, optimizer, loo_steps=0, var_steps=50, epochs=100)
 
 # Predict new inputs.
 ypred, _ = model.predict(xtest)

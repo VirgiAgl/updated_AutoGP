@@ -20,7 +20,7 @@ class GaussianProcess(object):
         A list of one kernel per latent function.
     inducing_inputs : ndarray   
         An array of initial inducing input locations. Dimensions: num_inducing * input_dim.
-    num_components : int
+    num_components : intnum_latent
         The number of mixture of Gaussian components.
     diag_post : bool
         True if the mixture of Gaussians uses a diagonal covariance, False otherwise.
@@ -37,6 +37,8 @@ class GaussianProcess(object):
         # Get the actual functions if they were initialized as strings.
         self.likelihood = likelihood_func
         self.kernels = kernel_funcs
+        #print("nella funzione gaussian process")
+        #print(len(self.kernels))
 
         # Save whether our posterior is diagonal or not.
         self.diag_post = diag_post
@@ -49,6 +51,7 @@ class GaussianProcess(object):
         # Initialize all model dimension constants.
         self.num_components = num_components
         self.num_latent = len(self.kernels)
+        #print("number of latent processes", self.num_latent)
         self.num_samples = num_samples
         self.num_inducing = inducing_inputs.shape[1]
         self.input_dim = inducing_inputs.shape[2]
@@ -87,14 +90,14 @@ class GaussianProcess(object):
                                                                         self.train_outputs,
                                                                         self.num_train,
                                                                         self.test_inputs)
-
+        #print("the graph has been initialized")
         #config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
         # Do all the tensorflow bookkeeping.
         self.session = tf.Session()
         self.optimizer = None
         self.train_step = None
 
-    def fit(self, data, optimizer, loo_steps=10,  var_steps=10, epochs=200,
+    def fit(self, data, optimizer, loo_steps=0,  var_steps=10, epochs=200,
             batch_size=None, display_step=1, test=None, loss=None):
         """
         Fit the Gaussian process model to the given data.
@@ -226,9 +229,13 @@ class GaussianProcess(object):
         inducing_inputs = raw_inducing_inputs
 
         # Build the matrices of covariances between inducing inputs.
+        #print("inducing inputs", inducing_inputs[0, :, :])
+        #print("kernel 1", self.kernels[0])
         kernel_mat = [self.kernels[i].kernel(inducing_inputs[i, :, :])
                       for i in xrange(self.num_latent)]
+        #print("doing the cholesky", kernel_mat)
         kernel_chol = tf.stack([tf.cholesky(k) for k in kernel_mat], 0)
+        #print("kernel cholesky", kernel_chol)
 
         # Now build the objective function.
         entropy = self._build_entropy(weights, means, covars)
@@ -236,7 +243,7 @@ class GaussianProcess(object):
         ell = self._build_ell(weights, means, covars, inducing_inputs,
                               kernel_chol, train_inputs, train_outputs)
         batch_size = tf.to_float(tf.shape(train_inputs)[0])
-        nelbo = -((batch_size / num_train) * (entropy + cross_enlt) + ell)
+        nelbo = -((batch_size / num_train) * (entropy + cross_ent) + ell)
 
         # Build the leave one out loss function.
         loo_loss = self._build_loo_loss(weights, means, covars, inducing_inputs,
@@ -316,6 +323,7 @@ class GaussianProcess(object):
         return entropy
 
     def _build_cross_ent(self, weights, means, covars, kernel_chol):
+        #print("camputing the cross entropy")
         cross_ent = 0.0
         for i in xrange(self.num_components):
             sum_val = 0.0
