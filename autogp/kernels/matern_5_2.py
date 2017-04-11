@@ -6,7 +6,7 @@ from autogp import util
 import kernel
 
 
-class Matern_3_2(kernel.Kernel):
+class Matern_5_2(kernel.Kernel):
     MAX_DIST = 1e8
 
     def __init__(self, input_dim, lengthscale=1.0, std_dev=1.5,
@@ -33,10 +33,10 @@ class Matern_3_2(kernel.Kernel):
         magnitude_square2 = tf.expand_dims(tf.reduce_sum(points2 ** 2, 1), 1)
         distances = (magnitude_square1 - 2 * tf.matmul(points1, tf.transpose(points2)) +
                      tf.transpose(magnitude_square2))
-        distances_root = tf.sqrt(distances + 1e-12)/self.lengthscale
+        distances_root = tf.sqrt(distances + 1e-12)/self.lengthscale  #Numerical stability problem!!
         distances_root = tf.clip_by_value(distances_root, 0.0, self.MAX_DIST);
         constant = np.sqrt(5.0)
-        first_term=(constant*distances_root + 1)*self.std_dev
+        first_term=(1 + constant*distances_root + 5.0/3.0*distances_root**2)*self.std_dev
         second_term = tf.exp(-constant*distances_root)
         kernel_matrix = tf.multiply(first_term,second_term)
         return kernel_matrix + white_noise
