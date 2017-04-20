@@ -19,7 +19,7 @@ xtest = inputs[idx[N:]]
 ytest = outputs[idx[N:]]
 
 # Initialize the Gaussian process.
-likelihood = autogp.likelihoods.Gaussian()
+likelihood = autogp.likelihoods.LGCP()
 kernel = [autogp.kernels.Polynomial(1)]
 inducing_inputs = xtrain
 model = autogp.GaussianProcess(likelihood, kernel, inducing_inputs)
