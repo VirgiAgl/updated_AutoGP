@@ -393,7 +393,7 @@ class GaussianProcess(object):
             sample_means[i] = tf.matmul(kern_prods[i, :, :], tf.expand_dims(means[i, :], 1))
             sample_vars[i] = tf.expand_dims(kern_sums[i, :] + quad_form, 1)
 
-        sample_means = tf.concat_v2(sample_means, 1)
-        sample_vars = tf.concat_v2(sample_vars, 1)
+        sample_means = tf.concat(sample_means, 1)
+        sample_vars = tf.concat(sample_vars, 1)
         return sample_means, sample_vars
 
