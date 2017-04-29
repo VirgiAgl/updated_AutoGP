@@ -25,6 +25,6 @@ class LGCP(likelihood.Likelihood):
 
     def predict(self, latent_means, latent_vars):
         sigma = tf.sqrt(latent_vars)
-        meanval = tf.exp(latent_means + sigma / 2) * tf.exp(self.offset)
-        varval = (tf.exp(sigma) - 1) * tf.exp(2 * latent_means + sigma) * tf.exp(2 * self.offset)
-        return meanval, varval
+        pred_means = tf.exp(latent_means + sigma / 2) * tf.exp(self.offset)
+        pred_vars = (tf.exp(sigma) - 1) * tf.exp(2 * latent_means + sigma) * tf.exp(2 * self.offset)
+        return pred_means, pred_vars

@@ -8,7 +8,7 @@ import kernel
 class RadialBasis(kernel.Kernel):
     MAX_DIST = 1e8
 
-    def __init__(self, input_dim, lengthscale=1.0, std_dev=1.0,
+    def __init__(self, input_dim, lengthscale=0.1, std_dev=1.0,
                  white=0.5, input_scaling=False):
         if input_scaling:
             self.lengthscale = tf.Variable(lengthscale * tf.ones([input_dim]))

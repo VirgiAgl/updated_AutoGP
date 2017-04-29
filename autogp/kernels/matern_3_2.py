@@ -9,8 +9,8 @@ import kernel
 class Matern_3_2(kernel.Kernel):
     MAX_DIST = 1e8
 
-    def __init__(self, input_dim, lengthscale=1.0, std_dev=1.5,
-                 white=0.1, input_scaling=False):
+    def __init__(self, input_dim, lengthscale=0.1, std_dev=1.0,
+                 white=0.5, input_scaling=False):
         if input_scaling:
             self.lengthscale = tf.Variable(lengthscale * tf.ones([input_dim]))
         else:
@@ -33,7 +33,7 @@ class Matern_3_2(kernel.Kernel):
         magnitude_square2 = tf.expand_dims(tf.reduce_sum(points2 ** 2, 1), 1)
         distances = (magnitude_square1 - 2 * tf.matmul(points1, tf.transpose(points2)) +
                      tf.transpose(magnitude_square2))
-        distances_root = tf.sqrt(distances + 1e-12)/self.lengthscale
+        distances_root = tf.sqrt(distances + 0.000001)/self.lengthscale
         distances_root = tf.clip_by_value(distances_root, 0.0, self.MAX_DIST);
         constant = np.sqrt(5.0)
         first_term=(constant*distances_root + 1)*self.std_dev
