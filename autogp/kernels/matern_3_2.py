@@ -33,7 +33,7 @@ class Matern_3_2(kernel.Kernel):
         magnitude_square2 = tf.expand_dims(tf.reduce_sum(points2 ** 2, 1), 1)
         distances = (magnitude_square1 - 2 * tf.matmul(points1, tf.transpose(points2)) +
                      tf.transpose(magnitude_square2))
-        distances_root = tf.sqrt(distances + 0.000001)/self.lengthscale
+        distances_root = tf.sqrt(distances + 0.001)/self.lengthscale
         distances_root = tf.clip_by_value(distances_root, 0.0, self.MAX_DIST);
         constant = np.sqrt(5.0)
         first_term=(constant*distances_root + 1)*self.std_dev
