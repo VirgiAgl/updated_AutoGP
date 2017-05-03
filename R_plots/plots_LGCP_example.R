@@ -13,48 +13,52 @@ library(nloptr)
 library(optimx)
 library(data.table)
 library(extrafont)
+library(dgof)
 loadfonts()
 
 #some helper functions
-source('Workspace/updated_AutoGP/helper.R')
+source('Workspace/updated_AutoGP/R_plots/helper.R')
+source('Workspace/updated_AutoGP/R_plots/plotting_functions.R')
 
 SP_name = "SF"
 
 w = 15
 h = 5
+sp = 1
 
-output_path = "../../first_pictures"
+output_path = "Workspace/updated_AutoGP/R_plots"
 
-# mining data
+# synthetic point process data
 name = 'synthetic_data'
-inputs = read.csv('Workspace/updated_AutoGP/data_inputs.csv')
-outputs = read.csv('Workspace/updated_AutoGP/data_outputs.csv')
-posterior_mean_intensity = read.csv('Workspace/updated_AutoGP/total_results_ypred.csv')
-posterior_var_intensity = read.csv('Workspace/updated_AutoGP/total_results_postvar.csv')
-idx = read.csv('Workspace/updated_AutoGP/idx.csv')
-xtest = read.csv('Workspace/updated_AutoGP/xtest.csv')
+inputs = read.csv('Workspace/updated_AutoGP/R_plots/data_inputs.csv')
+outputs = read.csv('Workspace/updated_AutoGP/R_plots/data_outputs.csv')
+posterior_mean_intensity = read.csv('Workspace/updated_AutoGP/R_plots/total_results_ypred.csv')
+posterior_var_intensity = read.csv('Workspace/updated_AutoGP/R_plots/total_results_postvar.csv')
+xtest = read.csv('Workspace/updated_AutoGP/R_plots/xtest.csv')
+ytest = read.csv('Workspace/updated_AutoGP/R_plots/ytest.csv')
+ytrain = read.csv('Workspace/updated_AutoGP/R_plots/ytrain.csv')
+xtrain = read.csv('Workspace/updated_AutoGP/R_plots/xtrain.csv')
+sample_intensity_test= read.csv('Workspace/updated_AutoGP/R_plots/sample_intensity_test.csv')
 
-N = 200
-idx = c(idx)
-idx = as.integer(unlist(idx))
-input_indices = sort(idx[(N):length(idx)])
-inputs$id = c(1:nrow(inputs))
-xtest = inputs[inputs$id %in% input_indices,]
+# N = 200
+# idx = as.integer(unlist(idx))
+# input_indices = sort(idx[(N):length(idx)])
+# inputs$id = c(1:nrow(inputs))
+# xtest = inputs[inputs$id %in% input_indices,]
 
 #data$model = toupper(substr(data$model_sp,0, 4))
 #data = rename_model(data)
 #data$sp = paste(SP_name, "=", substr(data$model_sp,6, 8))
 
-data_intensity = cbind(xtest, posterior_mean_intensity, posterior_var_intensity)
-data_intensity = data_intensity[,c(1,3,4)]
-colnames(data_intensity) = c("x","m","v")
+data_intensity = cbind(xtest, posterior_mean_intensity, posterior_var_intensity, sample_intensity_test)
+colnames(data_intensity) = c("x","m","v", "sample_intensity")
+data = cbind(inputs,outputs)
+colnames(data) = c("x", "y")
 
 model = "FG"
-sp = 1
 y_lab = "intensity"
-#p2 = draw_intensity(data_intensity, "intensity")
-ymax=data_intensity$m + 2 * sqrt(data_intensity$v)
-ymin= data_intensity$m - 2 * sqrt(data_intensity$v)
+
+p1 = draw_mining_data(data)
 
 p2 = ggplot(data_intensity, aes(x=x, y = m, colour = 1)) + 
   geom_point() +
@@ -75,14 +79,12 @@ p2 = ggplot(data_intensity, aes(x=x, y = m, colour = 1)) +
         axis.ticks.x = element_blank(),
         legend.title=element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1)
-  ) 
+) 
   
-data = cbind(inputs,outputs)
-#data = data[,c(1,3)]
-colnames(data) = c("x", "y")
-p1 = draw_mining_data(data)
+compare_intensity = HistPlot(list(data_intensity$m, data_intensity$sample_intensity), method = c("Posterior mean intensity","Initial intensity"), ggtitle = "Distributions for the intensity of the process")
+#ggsave(file=paste(output_path, name, ".pdf", sep = ""),  width=w, height=h, units = "cm" , device=cairo_pdf, g)      
 
-
-ggsave(file=paste(output_path, name, ".pdf", sep = ""),  width=w, height=h, units = "cm" , device=cairo_pdf, g)      
-
-
+# Kolmogorov Smirnov test. The smaller the p-value, the less likely that d1=d0
+ks.test(data_intensity$m, data_intensity$sample_intensity)
+# Wilcoxon signed-rank test
+wilcox.test(data_intensity$m, data_intensity$sample_intensity)

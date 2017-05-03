@@ -143,13 +143,13 @@ draw_intensity <- function(data, y_lab){
 draw_mining_data <- function(data){
   data$X = NULL
   p = ggplot(data, aes(x=x, y = y)) + 
-    stat_summary(fun.y = "mean", geom = "line", position = position_dodge()) + 
+    stat_summary(fun.y = "mean", geom = "point", position = position_dodge()) + 
     
     
     theme_bw() + 
     scale_colour_brewer(palette="Set1") +
-    xlab('time') +
-    ylab('event counts') +
+    xlab('x') +
+    ylab('Event counts') +
     theme(legend.direction = "vertical", legend.position = "none", legend.box = "vertical", 
           axis.line = element_line(colour = "black"),
           panel.grid.major=element_blank(), 

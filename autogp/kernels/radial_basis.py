@@ -9,7 +9,7 @@ class RadialBasis(kernel.Kernel):
     MAX_DIST = 1e8
 
     def __init__(self, input_dim, lengthscale=0.1, std_dev=1.0,
-                 white=0.5, input_scaling=False):
+                 white=0.01, input_scaling=False):
         if input_scaling:
             self.lengthscale = tf.Variable(lengthscale * tf.ones([input_dim]))
         else:
@@ -32,9 +32,9 @@ class RadialBasis(kernel.Kernel):
         magnitude_square2 = tf.expand_dims(tf.reduce_sum(points2 ** 2, 1), 1)
         distances = (magnitude_square1 - 2 * tf.matmul(points1, tf.transpose(points2)) +
                      tf.transpose(magnitude_square2))
-        print("prima di clip", distances)
+        #print("prima di clip", distances)
         distances = tf.clip_by_value(distances, 0.0, self.MAX_DIST);
-        print("dopo clip", distances)
+        #print("dopo clip", distances)
         kern = ((self.std_dev ** 2) * tf.exp(-distances / 2.0))
         return kern + white_noise
 
